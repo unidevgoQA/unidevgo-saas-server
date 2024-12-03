@@ -1,5 +1,6 @@
+import bcrypt from "bcrypt";
 import { model, Schema } from "mongoose";
-
+import config from "../../config";
 import { TCompany, TSubscription } from "./company.interface";
 
 const SubscriptionSchema = new Schema<TSubscription>(
@@ -30,5 +31,23 @@ const CompanySchema = new Schema<TCompany>(
     timestamps: true,
   }
 );
+
+// Pre save middleware hook
+CompanySchema.pre("save", async function (next) {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const company = this;
+  //hashing password
+  company.password = await bcrypt.hash(
+    company.password,
+    Number(config.bcrypt_salt_rounds)
+  );
+  next();
+});
+
+//post save middleware / hooks
+CompanySchema.post("save", function (doc, next) {
+  doc.password = "";
+  next();
+});
 
 export const CompanyModel = model<TCompany>("Company", CompanySchema);
