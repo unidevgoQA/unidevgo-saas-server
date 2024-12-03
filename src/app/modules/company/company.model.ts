@@ -50,4 +50,26 @@ CompanySchema.post("save", function (doc, next) {
   next();
 });
 
+// query middlewares
+// Work on find operation (Get only isDeleted those documents where isDeleted : false )
+// So that we cant get the deleted items
+CompanySchema.pre("find", function (next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
+// query middlewares
+// Work on findOne operation (Get only isDeleted those documents where isDeleted : false )
+// So that we cant get the deleted items
+CompanySchema.pre("findOne", function (next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
+// Work on aggregate
+CompanySchema.pre("aggregate", function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+  next();
+});
+
 export const CompanyModel = model<TCompany>("Company", CompanySchema);
