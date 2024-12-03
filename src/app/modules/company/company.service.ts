@@ -6,6 +6,13 @@ const createCompanyIntoDB = async (company: TCompany) => {
   return result;
 };
 
+const getAllCompaniesFromDB = async () => {
+  const result = await CompanyModel.find();
+  console.log("From service", result);
+  return result;
+};
+
 export const CompanyServices = {
   createCompanyIntoDB,
+  getAllCompaniesFromDB,
 };

@@ -25,18 +25,6 @@ const CompanyValidationSchema = z.object({
     .string()
     .min(10, "Contact number must be at least 10 characters long"),
   isDeleted: z.boolean().optional().default(false),
-  createdAt: z
-    .date()
-    .optional()
-    .refine((val) => val instanceof Date, {
-      message: "Invalid date format for createdAt.",
-    }),
-  updatedAt: z
-    .date()
-    .optional()
-    .refine((val) => val instanceof Date, {
-      message: "Invalid date format for updatedAt.",
-    }),
 });
 
 export const CompanyValidation = {

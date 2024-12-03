@@ -5,9 +5,6 @@ import { CompanyValidation } from "./company.validation";
 const createCompany = async (req: Request, res: Response) => {
   try {
     const { company: companytData } = req.body;
-
-    console.log(companytData);
-
     //data validation using zod
     const zodParseData =
       CompanyValidation.CompanyValidationSchema.parse(companytData);
@@ -27,6 +24,25 @@ const createCompany = async (req: Request, res: Response) => {
   }
 };
 
+const getAllCompanies = async (req: Request, res: Response) => {
+  try {
+    const result = await CompanyServices.getAllCompaniesFromDB();
+    console.log(result);
+    res.status(200).json({
+      success: true,
+      message: "Companies Data Retrieved",
+      data: result,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: err,
+    });
+  }
+};
+
 export const CompanyControllers = {
   createCompany,
+  getAllCompanies,
 };

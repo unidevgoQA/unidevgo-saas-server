@@ -16,7 +16,7 @@ export type TCompany = {
   profileImageUrl: string;
   address: string;
   contactNumber: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   isDeleted: boolean;
 };

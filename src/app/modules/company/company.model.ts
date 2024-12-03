@@ -2,13 +2,16 @@ import { model, Schema } from "mongoose";
 
 import { TCompany, TSubscription } from "./company.interface";
 
-const SubscriptionSchema = new Schema<TSubscription>({
-  plan: { type: String, required: true },
-  services: { type: [String], required: true },
-  startDate: { type: String, required: true },
-  expiryDate: { type: String, required: true },
-  status: { type: String, enum: ["active", "inactive"], required: true },
-});
+const SubscriptionSchema = new Schema<TSubscription>(
+  {
+    plan: { type: String, required: true },
+    services: { type: [String], required: true },
+    startDate: { type: String, required: true },
+    expiryDate: { type: String, required: true },
+    status: { type: String, enum: ["active", "inactive"], required: true },
+  },
+  { _id: false }
+);
 
 const CompanySchema = new Schema<TCompany>(
   {
