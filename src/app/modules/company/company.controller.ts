@@ -4,7 +4,7 @@ import { CompanyValidation } from "./company.validation";
 
 const createCompany = async (req: Request, res: Response) => {
   try {
-    const { company: companytData } = req.body;
+    const { company: companytData } = req.body.company;
     //data validation using zod
     const zodParseData =
       CompanyValidation.CompanyValidationSchema.parse(companytData);
@@ -78,9 +78,50 @@ const deleteCompany = async (req: Request, res: Response) => {
   }
 };
 
+const updateCompany = async (req: Request, res: Response) => {
+  try {
+    const { companyId } = req.params;
+    const updateData = req.body.company; // Access the 'company' key from the body
+
+    // Ensure the updateData is not empty and contains valid fields to update
+    if (!updateData) {
+      return res.status(400).json({
+        success: false,
+        message: "No update data provided",
+      });
+    }
+
+    const result = await CompanyServices.updateCompanyInDB(
+      companyId,
+      updateData
+    );
+
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: "Company not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Company updated successfully",
+      data: result,
+    });
+  } catch (err) {
+    console.error("Error updating company:", err);
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: err,
+    });
+  }
+};
+
 export const CompanyControllers = {
   createCompany,
   getAllCompanies,
   getSingleCompany,
   deleteCompany,
+  updateCompany,
 };

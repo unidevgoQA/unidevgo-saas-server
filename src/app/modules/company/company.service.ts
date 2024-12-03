@@ -22,9 +22,18 @@ const deleteCompanyFromDB = async (id: string) => {
   return result;
 };
 
+const updateCompanyInDB = async (id: string, updateData: Partial<TCompany>) => {
+  const result = await CompanyModel.findOneAndUpdate(
+    { id },
+    { $set: updateData }, // Use `$set` to update only the provided fields
+    { new: true } // Return the updated document
+  );
+  return result;
+};
 export const CompanyServices = {
   createCompanyIntoDB,
   getAllCompaniesFromDB,
   getSingleComapnyFromDB,
   deleteCompanyFromDB,
+  updateCompanyInDB,
 };
