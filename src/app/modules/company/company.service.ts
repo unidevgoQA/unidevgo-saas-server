@@ -17,8 +17,14 @@ const getSingleComapnyFromDB = async (id: string) => {
   return result;
 };
 
+const deleteCompanyFromDB = async (id: string) => {
+  const result = await CompanyModel.updateOne({ id }, { isDeleted: true });
+  return result;
+};
+
 export const CompanyServices = {
   createCompanyIntoDB,
   getAllCompaniesFromDB,
   getSingleComapnyFromDB,
+  deleteCompanyFromDB,
 };
