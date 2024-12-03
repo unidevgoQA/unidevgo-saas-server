@@ -12,7 +12,13 @@ const getAllCompaniesFromDB = async () => {
   return result;
 };
 
+const getSingleComapnyFromDB = async (id: string) => {
+  const result = await CompanyModel.findOne({ id });
+  return result;
+};
+
 export const CompanyServices = {
   createCompanyIntoDB,
   getAllCompaniesFromDB,
+  getSingleComapnyFromDB,
 };

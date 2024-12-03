@@ -42,7 +42,26 @@ const getAllCompanies = async (req: Request, res: Response) => {
   }
 };
 
+const getSingleCompany = async (req: Request, res: Response) => {
+  try {
+    const { companyId } = req.params;
+    const result = await CompanyServices.getSingleComapnyFromDB(companyId);
+    res.status(200).json({
+      success: true,
+      message: "Company Retrieved Successfully",
+      data: result,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: err,
+    });
+  }
+};
+
 export const CompanyControllers = {
   createCompany,
   getAllCompanies,
+  getSingleCompany,
 };
