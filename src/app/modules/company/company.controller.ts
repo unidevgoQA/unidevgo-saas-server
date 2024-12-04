@@ -4,7 +4,7 @@ import { CompanyValidation } from "./company.validation";
 
 const createCompany = async (req: Request, res: Response) => {
   try {
-    const { company: companytData } = req.body.company;
+    const { company: companytData } = req.body;
     //data validation using zod
     const zodParseData =
       CompanyValidation.CompanyValidationSchema.parse(companytData);
@@ -81,7 +81,7 @@ const deleteCompany = async (req: Request, res: Response) => {
 const updateCompany = async (req: Request, res: Response) => {
   try {
     const { companyId } = req.params;
-    const updateData = req.body.company; // Access the 'company' key from the body
+    const updateData = req.body.company;
 
     // Ensure the updateData is not empty and contains valid fields to update
     if (!updateData) {
