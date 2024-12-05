@@ -8,7 +8,7 @@ export type TEmployee = {
   designation: string;
   companyId: string;
   joiningDate: Date;
-  gender: "male" | "female" | "Other";
+  gender: "male" | "female" | "other";
   profileImageUrl: string;
   address: string;
   contactNumber: string;

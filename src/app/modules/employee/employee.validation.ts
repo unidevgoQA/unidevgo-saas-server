@@ -24,12 +24,13 @@ export const employeeValidationSchema = z.object({
     .string()
     .nonempty({ message: "Company ID is required and cannot be empty." }),
   joiningDate: z
-    .date({ required_error: "Joining date is required." })
-    .refine((date) => date <= new Date(), {
-      message: "Joining date cannot be in the future.",
-    }),
+    .string()
+    .refine((dateStr) => !isNaN(Date.parse(dateStr)), {
+      message: "Joining date must be a valid date string.",
+    })
+    .transform((dateStr) => new Date(dateStr)), // Convert string to Date
   gender: z.enum(["male", "female", "other"], {
-    message: "Gender must be 'male', 'female', or 'other'.",
+    message: "Gender must be 'male', 'female', or 'Other'.",
   }),
   profileImageUrl: z
     .string()
