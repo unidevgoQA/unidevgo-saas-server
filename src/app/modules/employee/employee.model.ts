@@ -12,7 +12,7 @@ const EmployeeSchema = new Schema<TEmployee>(
     designation: { type: String, required: true },
     companyId: { type: String, required: true },
     joiningDate: { type: Date, required: true },
-    gender: { type: String, enum: ["Male", "Female", "Other"], required: true },
+    gender: { type: String, enum: ["male", "female", "other"], required: true },
     profileImageUrl: { type: String, required: true },
     address: { type: String, required: true },
     contactNumber: { type: String, required: true },
