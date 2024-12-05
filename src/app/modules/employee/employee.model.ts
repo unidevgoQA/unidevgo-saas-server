@@ -1,4 +1,6 @@
+import bcrypt from "bcrypt";
 import { model, Schema } from "mongoose";
+import config from "../../config";
 import { TEmployee } from "./employee.interface";
 
 const EmployeeSchema = new Schema<TEmployee>(
@@ -22,5 +24,23 @@ const EmployeeSchema = new Schema<TEmployee>(
     timestamps: true,
   }
 );
+
+// Pre save middleware hook
+EmployeeSchema.pre("save", async function (next) {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const employee = this;
+  //hashing password
+  employee.password = await bcrypt.hash(
+    employee.password,
+    Number(config.bcrypt_salt_rounds)
+  );
+  next();
+});
+
+//post save middleware / hooks
+EmployeeSchema.post("save", function (doc, next) {
+  doc.password = "";
+  next();
+});
 
 export const EmployeeModel = model<TEmployee>("Employee", EmployeeSchema);
