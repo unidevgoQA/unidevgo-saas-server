@@ -8,17 +8,17 @@ const WorkProgressSchema = new Schema<TWorkProgress>(
     date: { type: Date, required: true },
     startTime: { type: Date },
     endTime: { type: Date },
-    totalWorkHours: { type: Number }, // Store in hours (e.g., 8.25)
+    totalWorkHours: { type: Number },
     trackerStatus: {
       type: String,
       enum: ["Running", "Stopped"],
       required: true,
     },
   },
-  { timestamps: true } // Automatically adds createdAt and updatedAt fields
+  { timestamps: true }
 );
 
 export const WorkProgressModel = model<TWorkProgress>(
-  "Employee",
+  "Work Progress",
   WorkProgressSchema
 );
