@@ -43,4 +43,23 @@ EmployeeSchema.post("save", function (doc, next) {
   next();
 });
 
+// query middlewares
+EmployeeSchema.pre("find", function (next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
+// query middlewares
+
+EmployeeSchema.pre("findOne", function (next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
+// Work on aggregate
+EmployeeSchema.pre("aggregate", function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+  next();
+});
+
 export const EmployeeModel = model<TEmployee>("Employee", EmployeeSchema);
