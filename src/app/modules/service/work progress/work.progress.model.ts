@@ -1,7 +1,6 @@
 import { model, Schema } from "mongoose";
 import { TWorkProgress } from "./work.progress.interface";
 
-// Define the schema for WorkProgress
 const WorkProgressSchema = new Schema<TWorkProgress>(
   {
     employeeId: { type: String, required: true },
