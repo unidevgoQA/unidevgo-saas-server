@@ -1,13 +1,14 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { WorkProgressService } from "./work.progress.service";
-import { WorkProgressValidationSchema } from "./work.progress.validation";
 
-const startTracker = async (req: Request, res: Response) => {
+// Start tracker
+const startTracker = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    // Validate the request body
-    const validatedData = WorkProgressValidationSchema.parse(req.body);
-
-    const { employeeId } = validatedData;
+    const { employeeId } = req.body;
     const progress = await WorkProgressService.startTracker(employeeId);
 
     res.status(200).json({
@@ -15,24 +16,28 @@ const startTracker = async (req: Request, res: Response) => {
       message: "Tracker started successfully",
       data: progress,
     });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (err: any) {
-    if (err.name === "ZodError") {
-      return res.status(400).json({
-        success: false,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        message: err.issues.map((issue: any) => issue.message),
-        error: err,
-      });
-    }
-    res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: err,
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Stop tracker
+const stopTracker = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { employeeId } = req.body;
+    const progress = await WorkProgressService.stopTracker(employeeId);
+
+    res.status(200).json({
+      success: true,
+      message: "Tracker stopped successfully",
+      data: progress,
     });
+  } catch (err) {
+    next(err);
   }
 };
 
 export const WorkProgressControllers = {
   startTracker,
+  stopTracker,
 };
