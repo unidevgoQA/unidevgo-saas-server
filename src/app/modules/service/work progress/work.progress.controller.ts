@@ -103,7 +103,34 @@ const getWorkProgressByCompanyId = async (
     if (workProgresses.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "No work progress found for the given companyId",
+        message: "No work progress found for the given company Id",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Work progresses retrieved successfully",
+      data: workProgresses,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const getWorkProgressByEmployeeId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { employeeId } = req.params;
+    const workProgresses =
+      await WorkProgressService.getWorkProgressByEmployeeId(employeeId);
+
+    if (workProgresses.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No work progress found for the given employee Id",
       });
     }
 
@@ -122,4 +149,5 @@ export const WorkProgressControllers = {
   stopTracker,
   filterWorkProgress,
   getWorkProgressByCompanyId,
+  getWorkProgressByEmployeeId,
 };

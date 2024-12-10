@@ -11,5 +11,9 @@ router.get(
   "/company/:companyId",
   WorkProgressControllers.getWorkProgressByCompanyId
 );
+router.get(
+  "/employee/:employeeId",
+  WorkProgressControllers.getWorkProgressByEmployeeId
+);
 
 export const WorkProgressRoutes = router;

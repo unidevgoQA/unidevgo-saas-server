@@ -94,6 +94,11 @@ const getWorkProgressByCompanyId = async (companyId: string) => {
   const workProgresses = await WorkProgressModel.find({ companyId });
   return workProgresses;
 };
+const getWorkProgressByEmployeeId = async (employeeId: string) => {
+  // Fetch work progresses matching the companyId
+  const workProgresses = await WorkProgressModel.find({ employeeId });
+  return workProgresses;
+};
 
 export const WorkProgressService = {
   startTracker,
@@ -101,4 +106,5 @@ export const WorkProgressService = {
   filterWorkProgressByDate,
   filterWorkProgressByDateRange,
   getWorkProgressByCompanyId,
+  getWorkProgressByEmployeeId,
 };
