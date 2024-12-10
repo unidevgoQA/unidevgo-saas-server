@@ -15,5 +15,6 @@ router.get(
   "/employee/:employeeId",
   WorkProgressControllers.getWorkProgressByEmployeeId
 );
+router.delete("/:workProgressId", WorkProgressControllers.deleteWorkProgress);
 
 export const WorkProgressRoutes = router;

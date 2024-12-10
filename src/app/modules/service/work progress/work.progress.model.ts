@@ -14,6 +14,7 @@ const WorkProgressSchema = new Schema<TWorkProgress>(
       enum: ["Running", "Stopped"],
       required: true,
     },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

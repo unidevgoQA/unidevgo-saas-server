@@ -8,6 +8,7 @@ export const WorkProgressValidationSchema = z.object({
   endTime: z.date().optional(),
   totalWorkHours: z.number().optional(),
   trackerStatus: z.enum(["Running", "Stopped"]).optional(),
+  isDeleted: z.boolean().optional().default(false),
 });
 
 export const workProgressValidation = {

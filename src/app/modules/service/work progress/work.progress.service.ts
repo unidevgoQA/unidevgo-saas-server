@@ -1,4 +1,5 @@
 import moment from "moment";
+import mongoose from "mongoose";
 import { WorkProgressModel } from "./work.progress.model";
 
 const startTracker = async (employeeId: string, companyId: string) => {
@@ -19,6 +20,7 @@ const startTracker = async (employeeId: string, companyId: string) => {
       date: today,
       startTime: new Date(),
       trackerStatus: "Running",
+      isDelete: "false",
     });
     await progress.save();
   } else if (progress.trackerStatus === "Running") {
@@ -100,6 +102,14 @@ const getWorkProgressByEmployeeId = async (employeeId: string) => {
   return workProgresses;
 };
 
+const deleteSingleWorkProgressFromDB = async (_id: string) => {
+  const result = await WorkProgressModel.updateOne(
+    { _id: new mongoose.Types.ObjectId(_id) },
+    { isDeleted: true }
+  );
+  return result;
+};
+
 export const WorkProgressService = {
   startTracker,
   stopTracker,
@@ -107,4 +117,5 @@ export const WorkProgressService = {
   filterWorkProgressByDateRange,
   getWorkProgressByCompanyId,
   getWorkProgressByEmployeeId,
+  deleteSingleWorkProgressFromDB,
 };

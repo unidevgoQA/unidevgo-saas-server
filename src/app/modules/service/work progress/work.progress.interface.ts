@@ -6,6 +6,7 @@ export type TWorkProgress = {
   endTime?: Date;
   totalWorkHours?: number;
   trackerStatus: "Running" | "Stopped";
+  isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
 };

@@ -144,10 +144,31 @@ const getWorkProgressByEmployeeId = async (
   }
 };
 
+const deleteWorkProgress = async (req: Request, res: Response) => {
+  try {
+    const { workProgressId } = req.params;
+    const result = await WorkProgressService.deleteSingleWorkProgressFromDB(
+      workProgressId
+    );
+    res.status(200).json({
+      success: true,
+      message: "Work progress deleted Successfully",
+      data: result,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: err,
+    });
+  }
+};
+
 export const WorkProgressControllers = {
   startTracker,
   stopTracker,
   filterWorkProgress,
   getWorkProgressByCompanyId,
   getWorkProgressByEmployeeId,
+  deleteWorkProgress,
 };
