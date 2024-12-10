@@ -3,10 +3,8 @@ import { WorkProgressControllers } from "./work.progress.controller";
 
 const router = express.Router();
 
-// Start tracker
 router.post("/start", WorkProgressControllers.startTracker);
-
-// Stop tracker
 router.post("/stop", WorkProgressControllers.stopTracker);
+router.post("/filter", WorkProgressControllers.filterWorkProgress);
 
 export const WorkProgressRoutes = router;

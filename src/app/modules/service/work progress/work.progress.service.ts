@@ -1,16 +1,21 @@
 import moment from "moment";
 import { WorkProgressModel } from "./work.progress.model";
 
-const startTracker = async (employeeId: string) => {
+const startTracker = async (employeeId: string, companyId: string) => {
   const today = moment().startOf("day").toDate();
 
   // Check if a tracker already exists for today
-  let progress = await WorkProgressModel.findOne({ employeeId, date: today });
+  let progress = await WorkProgressModel.findOne({
+    employeeId,
+    companyId,
+    date: today,
+  });
 
   if (!progress) {
     // Create a new tracker if none exists
     progress = new WorkProgressModel({
       employeeId,
+      companyId,
       date: today,
       startTime: new Date(),
       trackerStatus: "Running",
@@ -57,7 +62,36 @@ const stopTracker = async (employeeId: string) => {
   return progress;
 };
 
+const filterWorkProgressByDate = async (employeeId: string, date: Date) => {
+  // Query for a specific date
+  const result = await WorkProgressModel.find({
+    employeeId,
+    date: { $eq: date },
+  });
+
+  return result;
+};
+
+const filterWorkProgressByDateRange = async (
+  employeeId: string,
+  startDate: Date,
+  endDate: Date
+) => {
+  // Query for a date range
+  const result = await WorkProgressModel.find({
+    employeeId,
+    date: {
+      $gte: startDate, // Greater than or equal to startDate
+      $lte: endDate, // Less than or equal to endDate
+    },
+  });
+
+  return result;
+};
+
 export const WorkProgressService = {
   startTracker,
   stopTracker,
+  filterWorkProgressByDate,
+  filterWorkProgressByDateRange,
 };

@@ -1,5 +1,6 @@
 export type TWorkProgress = {
   employeeId: string;
+  companyId: string;
   date: Date;
   startTime?: Date;
   endTime?: Date;

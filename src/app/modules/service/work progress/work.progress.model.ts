@@ -4,6 +4,7 @@ import { TWorkProgress } from "./work.progress.interface";
 const WorkProgressSchema = new Schema<TWorkProgress>(
   {
     employeeId: { type: String, required: true },
+    companyId: { type: String, required: true },
     date: { type: Date, required: true },
     startTime: { type: Date },
     endTime: { type: Date },
