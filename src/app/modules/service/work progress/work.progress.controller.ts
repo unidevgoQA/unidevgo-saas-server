@@ -89,8 +89,37 @@ const filterWorkProgress = async (
   }
 };
 
+const getWorkProgressByCompanyId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { companyId } = req.params;
+    const workProgresses = await WorkProgressService.getWorkProgressByCompanyId(
+      companyId
+    );
+
+    if (workProgresses.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No work progress found for the given companyId",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Work progresses retrieved successfully",
+      data: workProgresses,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const WorkProgressControllers = {
   startTracker,
   stopTracker,
   filterWorkProgress,
+  getWorkProgressByCompanyId,
 };
