@@ -8,5 +8,6 @@ router.post("/create-employee", EmployeeControllers.createEmployee);
 router.get("/:employeeId", EmployeeControllers.getSingleEmployee);
 router.delete("/:employeeId", EmployeeControllers.deleteEmployee);
 router.put("/:employeeId", EmployeeControllers.updateEmployee);
+router.post("/login", EmployeeControllers.loginEmployee);
 
 export const EmployeeRoutes = router;

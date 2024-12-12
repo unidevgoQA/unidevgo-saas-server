@@ -1,4 +1,6 @@
+import bcrypt from "bcrypt";
 import { Request, Response } from "express";
+import jwt from "jsonwebtoken";
 import { EmployeeService } from "./employee.service";
 import { employeeValidation } from "./employee.validation";
 
@@ -121,10 +123,69 @@ const updateEmployee = async (req: Request, res: Response) => {
   }
 };
 
+const loginEmployee = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+
+    // Validate request data
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required",
+      });
+    }
+
+    // Check if the company exists
+    const employee = await EmployeeService.getEmployeeByEmail(email);
+
+    if (!employee || employee.isDeleted) {
+      return res.status(404).json({
+        success: false,
+        message: "Invalid email or company not found",
+      });
+    }
+
+    // Compare the provided password with the stored hashed password
+    const isPasswordValid = await bcrypt.compare(password, employee.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid password",
+      });
+    }
+
+    // Generate JWT
+    const token = jwt.sign(
+      {
+        _id: employee._id,
+        id: employee.id,
+        name: employee.name,
+        email: employee.email,
+      },
+      process.env.JWT_SECRET || "jwt_secret",
+      { expiresIn: "1h" }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+      token,
+    });
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: err,
+    });
+  }
+};
+
 export const EmployeeControllers = {
   createEmployee,
   getAllEmployees,
   getSingleEmployee,
   deleteEmployee,
   updateEmployee,
+  loginEmployee,
 };

@@ -14,4 +14,6 @@ export default {
   port,
   database_url: databaseUrl,
   bcrypt_salt_rounds: process.env.BCRYPT_SALT_ROUND,
+  jwt_secret: process.env.JWT_SECRET,
+  jwt_expire_in: process.env.JWT_EXPIRES_IN,
 };

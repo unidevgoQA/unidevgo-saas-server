@@ -1,4 +1,6 @@
+import bcrypt from "bcrypt";
 import { Request, Response } from "express";
+import jwt from "jsonwebtoken";
 import { CompanyServices } from "./company.service";
 import { CompanyValidation } from "./company.validation";
 
@@ -118,10 +120,69 @@ const updateCompany = async (req: Request, res: Response) => {
   }
 };
 
+const loginCompany = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+
+    // Validate request data
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required",
+      });
+    }
+
+    // Check if the company exists
+    const company = await CompanyServices.getCompanyByEmail(email);
+
+    if (!company || company.isDeleted) {
+      return res.status(404).json({
+        success: false,
+        message: "Invalid email or company not found",
+      });
+    }
+
+    // Compare the provided password with the stored hashed password
+    const isPasswordValid = await bcrypt.compare(password, company.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid password",
+      });
+    }
+
+    // Generate JWT
+    const token = jwt.sign(
+      {
+        _id: company._id,
+        id: company.id,
+        name: company.name,
+        email: company.email,
+      },
+      process.env.JWT_SECRET || "jwt_secret", // Replace with a secure secret in production
+      { expiresIn: "1h" }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+      token,
+    });
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: err,
+    });
+  }
+};
+
 export const CompanyControllers = {
   createCompany,
   getAllCompanies,
   getSingleCompany,
   deleteCompany,
   updateCompany,
+  loginCompany,
 };

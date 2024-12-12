@@ -33,10 +33,16 @@ const updateEmployeeInDB = async (
   return result;
 };
 
+const getEmployeeByEmail = async (email: string) => {
+  const result = await EmployeeModel.findOne({ email });
+  return result;
+};
+
 export const EmployeeService = {
   createEmployeeIntoDB,
   getAllEmployeesFromDB,
   getSingleEmployeeFromDB,
   deleteEmployeeFromDB,
   updateEmployeeInDB,
+  getEmployeeByEmail,
 };
