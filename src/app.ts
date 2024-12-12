@@ -2,6 +2,7 @@ import cors from "cors";
 import express, { Application, Request, Response } from "express";
 import { CompanyRoutes } from "./app/modules/company/company.route";
 import { EmployeeRoutes } from "./app/modules/employee/employee.route";
+import { LeaveManagementRoutes } from "./app/modules/service/leave management/leave.management.route";
 import { WorkProgressRoutes } from "./app/modules/service/work progress/work.progress.route";
 const app: Application = express();
 
@@ -13,6 +14,7 @@ app.use(cors());
 app.use("/api/v1/companies", CompanyRoutes);
 app.use("/api/v1/employees", EmployeeRoutes);
 app.use("/api/v1/work-progress", WorkProgressRoutes);
+app.use("/api/v1/leave", LeaveManagementRoutes);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Server Running");
