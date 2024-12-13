@@ -7,6 +7,11 @@ const applyLeaveIntoDB = async (leave: TLeaveManagement) => {
   return result;
 };
 
+const getAllLeavesFromDB = async () => {
+  const result = await LeaveManagementModel.find();
+  return result;
+};
+
 const geLeaveByCompanyId = async (companyId: string) => {
   const leaves = await LeaveManagementModel.find({ companyId });
   return leaves;
@@ -29,4 +34,5 @@ export const LeaveManagementService = {
   deleteSingleLeaveFromDB,
   geLeaveByCompanyId,
   getleaveByEmployeeId,
+  getAllLeavesFromDB,
 };

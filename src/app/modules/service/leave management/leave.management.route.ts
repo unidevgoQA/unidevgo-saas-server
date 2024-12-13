@@ -3,6 +3,7 @@ import { LeaveManagementControllers } from "./leave.management.controller";
 
 const router = express.Router();
 
+router.get("/", LeaveManagementControllers.getAllLeaves);
 router.post("/apply-leave", LeaveManagementControllers.applyLeave);
 router.get(
   "/company/:companyId",

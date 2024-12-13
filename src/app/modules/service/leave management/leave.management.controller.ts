@@ -25,6 +25,23 @@ const applyLeave = async (req: Request, res: Response) => {
   }
 };
 
+const getAllLeaves = async (req: Request, res: Response) => {
+  try {
+    const result = await LeaveManagementService.getAllLeavesFromDB();
+    res.status(200).json({
+      success: true,
+      message: "Leaves Data Retrieved",
+      data: result,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: err,
+    });
+  }
+};
+
 const getLeaveByCompanyId = async (
   req: Request,
   res: Response,
@@ -104,4 +121,5 @@ export const LeaveManagementControllers = {
   deleteLeave,
   getLeaveByEmployeeId,
   getLeaveByCompanyId,
+  getAllLeaves,
 };
