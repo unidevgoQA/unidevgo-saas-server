@@ -13,6 +13,8 @@ router.get(
   "/employee/:employeeId",
   LeaveManagementControllers.getLeaveByEmployeeId
 );
+
+router.put("/:leaveId", LeaveManagementControllers.updateLeaveStatus);
 router.delete("/:leaveId", LeaveManagementControllers.deleteLeave);
 
 export const LeaveManagementRoutes = router;

@@ -144,6 +144,23 @@ const getWorkProgressByEmployeeId = async (
   }
 };
 
+const getWorkProgress = async (req: Request, res: Response) => {
+  try {
+    const result = await WorkProgressService.getWrokProgressFromDB();
+    res.status(200).json({
+      success: true,
+      message: "Work rogress data retrieved",
+      data: result,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: err,
+    });
+  }
+};
+
 const deleteWorkProgress = async (req: Request, res: Response) => {
   try {
     const { workProgressId } = req.params;
@@ -171,4 +188,5 @@ export const WorkProgressControllers = {
   getWorkProgressByCompanyId,
   getWorkProgressByEmployeeId,
   deleteWorkProgress,
+  getWorkProgress,
 };

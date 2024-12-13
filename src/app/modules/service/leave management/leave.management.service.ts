@@ -21,6 +21,14 @@ const getleaveByEmployeeId = async (employeeId: string) => {
   return leaves;
 };
 
+const updateLeaveStatusInDB = async (_id: string, status: string) => {
+  const result = await LeaveManagementModel.updateOne(
+    { _id: new mongoose.Types.ObjectId(_id) },
+    { status: status }
+  );
+  return result;
+};
+
 const deleteSingleLeaveFromDB = async (_id: string) => {
   const result = await LeaveManagementModel.updateOne(
     { _id: new mongoose.Types.ObjectId(_id) },
@@ -35,4 +43,5 @@ export const LeaveManagementService = {
   geLeaveByCompanyId,
   getleaveByEmployeeId,
   getAllLeavesFromDB,
+  updateLeaveStatusInDB,
 };

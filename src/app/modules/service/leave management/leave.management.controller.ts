@@ -96,6 +96,29 @@ const getLeaveByEmployeeId = async (
   }
 };
 
+const updateLeaveStatus = async (req: Request, res: Response) => {
+  try {
+    const { leaveId } = req.params;
+    const { status } = req.body;
+
+    const result = await LeaveManagementService.updateLeaveStatusInDB(
+      leaveId,
+      status
+    );
+    res.status(200).json({
+      success: true,
+      message: "Status update successfully",
+      data: result,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: err,
+    });
+  }
+};
+
 const deleteLeave = async (req: Request, res: Response) => {
   try {
     const { leaveId } = req.params;
@@ -121,5 +144,6 @@ export const LeaveManagementControllers = {
   deleteLeave,
   getLeaveByEmployeeId,
   getLeaveByCompanyId,
+  updateLeaveStatus,
   getAllLeaves,
 };
