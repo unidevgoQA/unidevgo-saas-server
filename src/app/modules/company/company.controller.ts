@@ -80,17 +80,18 @@ const deleteCompany = async (req: Request, res: Response) => {
   }
 };
 
-const updateCompany = async (req: Request, res: Response) => {
+const updateCompany = async (req: Request, res: Response): Promise<void> => {
   try {
     const { companyId } = req.params;
     const updateData = req.body.company;
 
     // Ensure the updateData is not empty and contains valid fields to update
     if (!updateData) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: "No update data provided",
       });
+      return;
     }
 
     const result = await CompanyServices.updateCompanyInDB(
@@ -99,10 +100,11 @@ const updateCompany = async (req: Request, res: Response) => {
     );
 
     if (!result) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: "Company not found",
       });
+      return;
     }
 
     res.status(200).json({
@@ -111,7 +113,7 @@ const updateCompany = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (err) {
-    console.error("Error updating company:", err);
+    console.error("Error updating Company:", err);
     res.status(500).json({
       success: false,
       message: "Something went wrong",
@@ -120,35 +122,38 @@ const updateCompany = async (req: Request, res: Response) => {
   }
 };
 
-const loginCompany = async (req: Request, res: Response) => {
+const loginCompany = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
 
     // Validate request data
     if (!email || !password) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: "Email and password are required",
       });
+      return;
     }
 
     // Check if the company exists
     const company = await CompanyServices.getCompanyByEmail(email);
 
     if (!company || company.isDeleted) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
-        message: "Invalid email or company not found",
+        message: "Invalid email or employee not found",
       });
+      return;
     }
 
     // Compare the provided password with the stored hashed password
     const isPasswordValid = await bcrypt.compare(password, company.password);
     if (!isPasswordValid) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         message: "Invalid password",
       });
+      return;
     }
 
     // Generate JWT

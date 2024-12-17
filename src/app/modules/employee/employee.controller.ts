@@ -4,11 +4,11 @@ import jwt from "jsonwebtoken";
 import { EmployeeService } from "./employee.service";
 import { employeeValidation } from "./employee.validation";
 
-const createEmployee = async (req: Request, res: Response) => {
+const createEmployee = async (req: Request, res: Response): Promise<void> => {
   try {
     const { employee: employeeData } = req.body;
 
-    //data validation using zod
+    // Data validation using zod
     const zodParseData =
       employeeValidation.employeeValidationSchema.parse(employeeData);
 
@@ -27,7 +27,7 @@ const createEmployee = async (req: Request, res: Response) => {
   }
 };
 
-const getAllEmployees = async (req: Request, res: Response) => {
+const getAllEmployees = async (req: Request, res: Response): Promise<void> => {
   try {
     const result = await EmployeeService.getAllEmployeesFromDB();
     console.log(result);
@@ -45,7 +45,10 @@ const getAllEmployees = async (req: Request, res: Response) => {
   }
 };
 
-const getSingleEmployee = async (req: Request, res: Response) => {
+const getSingleEmployee = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { employeeId } = req.params;
     const result = await EmployeeService.getSingleEmployeeFromDB(employeeId);
@@ -63,13 +66,13 @@ const getSingleEmployee = async (req: Request, res: Response) => {
   }
 };
 
-const deleteEmployee = async (req: Request, res: Response) => {
+const deleteEmployee = async (req: Request, res: Response): Promise<void> => {
   try {
     const { employeeId } = req.params;
     const result = await EmployeeService.deleteEmployeeFromDB(employeeId);
     res.status(200).json({
       success: true,
-      message: "Employee deleted Successfully",
+      message: "Employee deleted successfully",
       data: result,
     });
   } catch (err) {
@@ -81,19 +84,18 @@ const deleteEmployee = async (req: Request, res: Response) => {
   }
 };
 
-const updateEmployee = async (req: Request, res: Response) => {
+const updateEmployee = async (req: Request, res: Response): Promise<void> => {
   try {
     const { employeeId } = req.params;
     const updateData = req.body.employee;
 
-    console.log(employeeId, updateData);
-
     // Ensure the updateData is not empty and contains valid fields to update
     if (!updateData) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: "No update data provided",
       });
+      return;
     }
 
     const result = await EmployeeService.updateEmployeeInDB(
@@ -102,10 +104,11 @@ const updateEmployee = async (req: Request, res: Response) => {
     );
 
     if (!result) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: "Employee not found",
       });
+      return;
     }
 
     res.status(200).json({
@@ -114,7 +117,7 @@ const updateEmployee = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (err) {
-    console.error("Error updating company:", err);
+    console.error("Error updating employee:", err);
     res.status(500).json({
       success: false,
       message: "Something went wrong",
@@ -123,35 +126,38 @@ const updateEmployee = async (req: Request, res: Response) => {
   }
 };
 
-const loginEmployee = async (req: Request, res: Response) => {
+const loginEmployee = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
 
     // Validate request data
     if (!email || !password) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: "Email and password are required",
       });
+      return;
     }
 
-    // Check if the company exists
+    // Check if the employee exists
     const employee = await EmployeeService.getEmployeeByEmail(email);
 
     if (!employee || employee.isDeleted) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
-        message: "Invalid email or company not found",
+        message: "Invalid email or employee not found",
       });
+      return;
     }
 
     // Compare the provided password with the stored hashed password
     const isPasswordValid = await bcrypt.compare(password, employee.password);
     if (!isPasswordValid) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         message: "Invalid password",
       });
+      return;
     }
 
     // Generate JWT
