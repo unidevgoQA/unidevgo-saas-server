@@ -1,5 +1,6 @@
 import cors from "cors";
 import express, { Application, Request, Response } from "express";
+import { AdminRoutes } from "./app/modules/admin/admin.route";
 import { CompanyRoutes } from "./app/modules/company/company.route";
 import { EmployeeRoutes } from "./app/modules/employee/employee.route";
 import { LeaveManagementRoutes } from "./app/modules/service/leave management/leave.management.route";
@@ -12,6 +13,7 @@ app.use(express.json());
 app.use(cors());
 
 //Application routes
+app.use("/api/v1/admins", AdminRoutes);
 app.use("/api/v1/companies", CompanyRoutes);
 app.use("/api/v1/employees", EmployeeRoutes);
 app.use("/api/v1/subscriptions", SubscriptionRoutes);
