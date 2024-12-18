@@ -21,7 +21,7 @@ const CompanyValidationSchema = z.object({
     .min(6, "Password must be at least 6 characters long")
     .max(20, "Password can not be more than 20 characters"),
   needsPasswordChange: z.boolean().optional().default(false),
-  subscription: SubscriptionValidationSchema,
+  subscription: z.string(),
   profileImageUrl: z.string().url("Invalid URL format for profile Image Url"),
   address: z.string().min(1, "Address is required"),
   contactNumber: z

@@ -1,18 +1,7 @@
 import bcrypt from "bcrypt";
 import { model, Schema } from "mongoose";
 import config from "../../config";
-import { TCompany, TSubscription } from "./company.interface";
-
-const SubscriptionSchema = new Schema<TSubscription>(
-  {
-    plan: { type: String, required: true },
-    services: { type: [String], required: true },
-    startDate: { type: String, required: true },
-    expiryDate: { type: String, required: true },
-    status: { type: String, enum: ["active", "inactive"], required: true },
-  },
-  { _id: false }
-);
+import { TCompany } from "./company.interface";
 
 const CompanySchema = new Schema<TCompany>(
   {
@@ -21,7 +10,7 @@ const CompanySchema = new Schema<TCompany>(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     needsPasswordChange: { type: Boolean, default: false },
-    subscription: { type: SubscriptionSchema, required: true },
+    subscription: { type: String },
     profileImageUrl: { type: String, required: true },
     address: { type: String, required: true },
     contactNumber: { type: String, required: true },

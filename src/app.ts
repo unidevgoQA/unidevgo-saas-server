@@ -4,6 +4,7 @@ import { CompanyRoutes } from "./app/modules/company/company.route";
 import { EmployeeRoutes } from "./app/modules/employee/employee.route";
 import { LeaveManagementRoutes } from "./app/modules/service/leave management/leave.management.route";
 import { WorkProgressRoutes } from "./app/modules/service/work progress/work.progress.route";
+import { SubscriptionRoutes } from "./app/modules/subscription/subscription.route";
 const app: Application = express();
 
 //parsers
@@ -13,6 +14,7 @@ app.use(cors());
 //Application routes
 app.use("/api/v1/companies", CompanyRoutes);
 app.use("/api/v1/employees", EmployeeRoutes);
+app.use("/api/v1/subscriptions", SubscriptionRoutes);
 app.use("/api/v1/work-progress", WorkProgressRoutes);
 app.use("/api/v1/leave", LeaveManagementRoutes);
 
