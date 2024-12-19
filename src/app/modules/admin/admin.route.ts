@@ -9,5 +9,6 @@ router.get("/:adminId", AdminControllers.getAdminById);
 router.put("/:adminId", AdminControllers.updateAdmin);
 router.delete("/:adminId", AdminControllers.deleteAdmin);
 router.post("/login", AdminControllers.loginAdmin);
+router.put("/update-password/:adminId", AdminControllers.updatePassword);
 
 export const AdminRoutes = router;

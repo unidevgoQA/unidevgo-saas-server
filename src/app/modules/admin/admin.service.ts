@@ -1,3 +1,5 @@
+import bcrypt from "bcrypt";
+import config from "../../config";
 import { TAdmin } from "./admin.interface";
 import { AdminModel } from "./admin.model";
 
@@ -35,6 +37,19 @@ const getAdminByEmail = async (email: string) => {
   return result;
 };
 
+const updateAdminPasswordInDB = async (id: string, newPassword: string) => {
+  const hashedPassword = await bcrypt.hash(
+    newPassword,
+    Number(config.bcrypt_salt_rounds)
+  );
+  const result = await AdminModel.findOneAndUpdate(
+    { id },
+    { $set: { password: hashedPassword } },
+    { new: true }
+  );
+  return result;
+};
+
 export const AdminServices = {
   createAdminInDB,
   getAllAdminsFromDB,
@@ -42,4 +57,5 @@ export const AdminServices = {
   updateAdminInDB,
   deleteAdminFromDB,
   getAdminByEmail,
+  updateAdminPasswordInDB,
 };

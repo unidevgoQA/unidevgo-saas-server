@@ -31,10 +31,10 @@ AdminSchema.pre("save", async function (next) {
 });
 
 //post save middleware / hooks
-AdminSchema.post("save", function (doc, next) {
-  doc.password = "";
-  next();
-});
+// AdminSchema.post("save", function (doc, next) {
+//   doc.password = "";
+//   next();
+// });
 
 // query middlewares
 AdminSchema.pre("find", function (next) {

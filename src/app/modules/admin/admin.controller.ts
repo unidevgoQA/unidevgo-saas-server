@@ -118,7 +118,6 @@ const loginAdmin = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
 
-    // Validate request data
     if (!email || !password) {
       res.status(400).json({
         success: false,
@@ -127,7 +126,6 @@ const loginAdmin = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Check if the employee exists
     const admin = await AdminServices.getAdminByEmail(email);
 
     if (!admin || admin.isDeleted) {
@@ -138,8 +136,8 @@ const loginAdmin = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Compare the provided password with the stored hashed password
     const isPasswordValid = await bcrypt.compare(password, admin.password);
+
     if (!isPasswordValid) {
       res.status(401).json({
         success: false,
@@ -148,7 +146,6 @@ const loginAdmin = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Generate JWT
     const token = jwt.sign(
       {
         _id: admin._id,
@@ -175,6 +172,69 @@ const loginAdmin = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+const updatePassword = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { adminId } = req.params;
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      res.status(400).json({
+        success: false,
+        message: "Current password and new password are required",
+      });
+      return;
+    }
+
+    const admin = await AdminServices.getAdminByIdFromDB(adminId);
+
+    if (!admin || admin.isDeleted) {
+      res.status(404).json({
+        success: false,
+        message: "Admin not found",
+      });
+      return;
+    }
+
+    const isPasswordValid = await bcrypt.compare(
+      currentPassword,
+      admin.password
+    );
+
+    if (!isPasswordValid) {
+      res.status(401).json({
+        success: false,
+        message: "Current password is incorrect",
+      });
+      return;
+    }
+
+    const result = await AdminServices.updateAdminPasswordInDB(
+      adminId,
+      newPassword
+    );
+
+    if (!result) {
+      res.status(500).json({
+        success: false,
+        message: "Failed to update password",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Password updated successfully",
+    });
+  } catch (err) {
+    console.error("Error updating password:", err);
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: err,
+    });
+  }
+};
+
 export const AdminControllers = {
   createAdmin,
   getAllAdmins,
@@ -182,4 +242,5 @@ export const AdminControllers = {
   updateAdmin,
   deleteAdmin,
   loginAdmin,
+  updatePassword,
 };

@@ -1,3 +1,5 @@
+import bcrypt from "bcrypt";
+import config from "../../config";
 import { TEmployee } from "./employee.interface";
 import { EmployeeModel } from "./employee.model";
 
@@ -38,10 +40,24 @@ const getEmployeeByEmail = async (email: string) => {
   return result;
 };
 
+const updateEmployeePasswordInDB = async (id: string, newPassword: string) => {
+  const hashedPassword = await bcrypt.hash(
+    newPassword,
+    Number(config.bcrypt_salt_rounds)
+  );
+  const result = await EmployeeModel.findOneAndUpdate(
+    { id },
+    { $set: { password: hashedPassword } },
+    { new: true }
+  );
+  return result;
+};
+
 export const EmployeeService = {
   createEmployeeIntoDB,
   getAllEmployeesFromDB,
   getSingleEmployeeFromDB,
+  updateEmployeePasswordInDB,
   deleteEmployeeFromDB,
   updateEmployeeInDB,
   getEmployeeByEmail,
