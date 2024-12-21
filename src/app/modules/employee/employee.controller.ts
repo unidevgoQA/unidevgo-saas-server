@@ -31,11 +31,18 @@ const getAllEmployees = async (req: Request, res: Response): Promise<void> => {
   try {
     const result = await EmployeeService.getAllEmployeesFromDB();
     console.log(result);
-    res.status(200).json({
-      success: true,
-      message: "Employees Data Retrieved",
-      data: result,
-    });
+    if (result && result.length > 0) {
+      res.status(200).json({
+        success: true,
+        message: "Employees Data Retrieved",
+        data: result,
+      });
+    } else {
+      res.status(404).json({
+        success: false,
+        message: "No employees found",
+      });
+    }
   } catch (err) {
     res.status(500).json({
       success: false,
@@ -52,11 +59,18 @@ const getSingleEmployee = async (
   try {
     const { employeeId } = req.params;
     const result = await EmployeeService.getSingleEmployeeFromDB(employeeId);
-    res.status(200).json({
-      success: true,
-      message: "Employee Retrieved Successfully",
-      data: result,
-    });
+    if(result!=null){
+      res.status(200).json({
+        success: true,
+        message: "Employee Retrieved Successfully",
+        data: result,
+      });
+    } else{
+      res.status(404).json({
+        success: false,
+        message: "Employee not found",
+      });
+    }
   } catch (err) {
     res.status(500).json({
       success: false,
@@ -70,11 +84,18 @@ const deleteEmployee = async (req: Request, res: Response): Promise<void> => {
   try {
     const { employeeId } = req.params;
     const result = await EmployeeService.deleteEmployeeFromDB(employeeId);
-    res.status(200).json({
-      success: true,
-      message: "Employee deleted successfully",
-      data: result,
-    });
+    if (result.matchedCount == 1) {
+      res.status(200).json({
+        success: true,
+        message: "Employee deleted successfully",
+        data: result,
+      });
+    } else {
+      res.status(404).json({
+        success: false,
+        message: "Employee not found",
+      });
+    }
   } catch (err) {
     res.status(500).json({
       success: false,
