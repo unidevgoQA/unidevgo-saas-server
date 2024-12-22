@@ -9,5 +9,6 @@ router.get("/:companyId", CompanyControllers.getSingleCompany);
 router.delete("/:companyId", CompanyControllers.deleteCompany);
 router.put("/:companyId", CompanyControllers.updateCompany);
 router.post("/login", CompanyControllers.loginCompany);
+router.put("/update-password/:companyId", CompanyControllers.updatePassword);
 
 export const CompanyRoutes = router;

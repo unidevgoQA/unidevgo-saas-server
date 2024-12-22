@@ -1,3 +1,5 @@
+import bcrypt from "bcrypt";
+import config from "../../config";
 import { TCompany } from "./company.interface";
 import { CompanyModel } from "./company.model";
 
@@ -36,11 +38,25 @@ const getCompanyByEmail = async (email: string) => {
   return result;
 };
 
+const updateCompanyPasswordInDB = async (id: string, newPassword: string) => {
+  const hashedPassword = await bcrypt.hash(
+    newPassword,
+    Number(config.bcrypt_salt_rounds)
+  );
+  const result = await CompanyModel.findOneAndUpdate(
+    { id },
+    { $set: { password: hashedPassword } },
+    { new: true }
+  );
+  return result;
+};
+
 export const CompanyServices = {
   createCompanyIntoDB,
   getAllCompaniesFromDB,
   getSingleComapnyFromDB,
   deleteCompanyFromDB,
   updateCompanyInDB,
+  updateCompanyPasswordInDB,
   getCompanyByEmail,
 };

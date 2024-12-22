@@ -183,6 +183,69 @@ const loginCompany = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+const updatePassword = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { companyId } = req.params;
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      res.status(400).json({
+        success: false,
+        message: "Current password and new password are required",
+      });
+      return;
+    }
+
+    const company = await CompanyServices.getSingleComapnyFromDB(companyId);
+
+    if (!company || company.isDeleted) {
+      res.status(404).json({
+        success: false,
+        message: "Company not found",
+      });
+      return;
+    }
+
+    const isPasswordValid = await bcrypt.compare(
+      currentPassword,
+      company.password
+    );
+
+    if (!isPasswordValid) {
+      res.status(401).json({
+        success: false,
+        message: "Current password is incorrect",
+      });
+      return;
+    }
+
+    const result = await CompanyServices.updateCompanyPasswordInDB(
+      companyId,
+      newPassword
+    );
+
+    if (!result) {
+      res.status(500).json({
+        success: false,
+        message: "Failed to update password",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Password updated successfully",
+    });
+  } catch (err) {
+    console.error("Error updating password:", err);
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: err,
+    });
+  }
+};
+
 export const CompanyControllers = {
   createCompany,
   getAllCompanies,
@@ -190,4 +253,5 @@ export const CompanyControllers = {
   deleteCompany,
   updateCompany,
   loginCompany,
+  updatePassword,
 };
