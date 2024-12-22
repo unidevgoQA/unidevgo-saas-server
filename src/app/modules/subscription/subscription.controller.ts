@@ -1,91 +1,147 @@
 import { Request, Response } from "express";
+import { ZodError } from "zod";
 import { SubscriptionServices } from "./subscription.service";
 import { SubscriptionValidation } from "./subscription.validation";
 
-const createSubscription = async (req: Request, res: Response) => {
+// Utility function for centralized error handling
+const handleError = (
+  res: Response,
+  error: any,
+  statusCode = 500,
+  defaultMessage = "Something went wrong"
+) => {
+  console.error("Error:", error); // Log error for debugging
+  const message =
+    error instanceof ZodError
+      ? error.errors.map((e) => e.message).join(", ") // Format validation errors
+      : error.message || defaultMessage;
+
+  res.status(statusCode).json({
+    success: false,
+    message,
+    error: error.stack || error, // Include stack trace in non-production environments
+  });
+};
+
+// Controller to create a new subscription
+const createSubscription = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { subscription: subscriptionData } = req.body;
 
-    // Data validation using Zod
-    const zodParseData =
+    // Validate subscription data using Zod schema
+    const parsedData =
       SubscriptionValidation.SubscriptionValidationSchema.parse(
         subscriptionData
       );
 
     const result = await SubscriptionServices.createSubscriptionIntoDB(
-      zodParseData
+      parsedData
     );
-    res.status(200).json({
+
+    res.status(201).json({
       success: true,
       message: "Subscription added successfully",
       data: result,
     });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: "Something went wrong",
-      error: err,
-    });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      handleError(res, error, 400, "Validation error");
+    } else {
+      handleError(res, error);
+    }
   }
 };
 
-const getAllSubscription = async (req: Request, res: Response) => {
+// Controller to get all subscriptions
+const getAllSubscription = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const result = await SubscriptionServices.getAllSubscriptionFromDB();
+
+    if (result.length === 0) {
+      res.status(404).json({
+        success: false,
+        message: "No subscriptions found",
+      });
+      return;
+    }
+
     res.status(200).json({
       success: true,
-      message: "Subscriptions Data Retrieved",
+      message: "Subscriptions retrieved successfully",
       data: result,
     });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: "Something went wrong",
-      error: err,
-    });
+  } catch (error) {
+    handleError(res, error);
   }
 };
 
-const getSingleSubscription = async (req: Request, res: Response) => {
+// Controller to get a single subscription by ID
+const getSingleSubscription = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { subscriptionId } = req.params;
+
     const result = await SubscriptionServices.getSingleSubscriptionFromDB(
       subscriptionId
     );
+
+    if (!result) {
+      res.status(404).json({
+        success: false,
+        message: "Subscription not found",
+      });
+      return;
+    }
+
     res.status(200).json({
       success: true,
-      message: "Subscription Retrieved Successfully",
+      message: "Subscription retrieved successfully",
       data: result,
     });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: "Something went wrong",
-      error: err,
-    });
+  } catch (error) {
+    handleError(res, error);
   }
 };
 
-const deleteSubscription = async (req: Request, res: Response) => {
+// Controller to delete a subscription
+const deleteSubscription = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { subscriptionId } = req.params;
+
     const result = await SubscriptionServices.deleteSubscriptionFromDB(
       subscriptionId
     );
+
+    if (!result) {
+      res.status(404).json({
+        success: false,
+        message: "Subscription not found",
+      });
+      return;
+    }
+
     res.status(200).json({
       success: true,
-      message: "Subscription deleted Successfully",
+      message: "Subscription deleted successfully",
       data: result,
     });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: "Something went wrong",
-      error: err,
-    });
+  } catch (error) {
+    handleError(res, error);
   }
 };
 
+// Controller to update a subscription
 const updateSubscription = async (
   req: Request,
   res: Response
@@ -120,16 +176,16 @@ const updateSubscription = async (
       message: "Subscription updated successfully",
       data: result,
     });
-  } catch (err) {
-    console.error("Error updating Subscription:", err);
-    res.status(500).json({
-      success: false,
-      message: "Something went wrong",
-      error: err,
-    });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      handleError(res, error, 400, "Validation error");
+    } else {
+      handleError(res, error);
+    }
   }
 };
 
+// Export all subscription controllers
 export const SubscriptionControllers = {
   createSubscription,
   getAllSubscription,

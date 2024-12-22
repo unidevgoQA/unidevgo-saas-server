@@ -1,63 +1,100 @@
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import { ZodError } from "zod";
 import { AdminServices } from "./admin.service";
 import { AdminValidation } from "./admin.validation";
 
-const createAdmin = async (req: Request, res: Response) => {
+// Utility function for centralized error handling
+const handleError = (
+  res: Response,
+  error: any,
+  statusCode = 500,
+  defaultMessage = "Something went wrong"
+) => {
+  console.error("Error:", error); // Log the error for debugging
+  const message =
+    error instanceof ZodError
+      ? error.errors.map((e) => e.message).join(", ") // Format validation errors
+      : error.message || defaultMessage;
+
+  res.status(statusCode).json({
+    success: false,
+    message,
+    error: error.stack || error, // Include stack trace for debugging in non-production environments
+  });
+};
+
+// Controller to create a new admin
+const createAdmin = async (req: Request, res: Response): Promise<void> => {
   try {
     const adminData = AdminValidation.AdminValidationSchema.parse(req.body);
 
     const result = await AdminServices.createAdminInDB(adminData);
+
     res.status(201).json({
       success: true,
       message: "Admin created successfully",
       data: result,
     });
-  } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: "Failed to create admin",
-      error: err,
-    });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      handleError(res, error, 400, "Validation error");
+    } else {
+      handleError(res, error);
+    }
   }
 };
 
-const getAllAdmins = async (req: Request, res: Response) => {
+// Controller to retrieve all admins
+const getAllAdmins = async (req: Request, res: Response): Promise<void> => {
   try {
     const result = await AdminServices.getAllAdminsFromDB();
+
+    if (result.length === 0) {
+      res.status(404).json({
+        success: false,
+        message: "No admins found",
+      });
+      return;
+    }
+
     res.status(200).json({
       success: true,
       message: "Admins retrieved successfully",
       data: result,
     });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to retrieve admins",
-      error: err,
-    });
+  } catch (error) {
+    handleError(res, error);
   }
 };
 
+// Controller to retrieve a single admin by ID
 const getAdminById = async (req: Request, res: Response): Promise<void> => {
   try {
     const { adminId } = req.params;
+
     const result = await AdminServices.getAdminByIdFromDB(adminId);
+
+    if (!result) {
+      res.status(404).json({
+        success: false,
+        message: "Admin not found",
+      });
+      return;
+    }
+
     res.status(200).json({
       success: true,
-      message: "Admin Retrieved Successfully",
+      message: "Admin retrieved successfully",
       data: result,
     });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: "Something went wrong",
-      error: err,
-    });
+  } catch (error) {
+    handleError(res, error);
   }
 };
 
+// Controller to update admin details
 const updateAdmin = async (req: Request, res: Response): Promise<void> => {
   try {
     const { adminId } = req.params;
@@ -86,34 +123,37 @@ const updateAdmin = async (req: Request, res: Response): Promise<void> => {
       message: "Admin updated successfully",
       data: result,
     });
-  } catch (err) {
-    console.error("Error updating Admin:", err);
-    res.status(500).json({
-      success: false,
-      message: "Something went wrong",
-      error: err,
-    });
+  } catch (error) {
+    handleError(res, error);
   }
 };
 
+// Controller to delete an admin
 const deleteAdmin = async (req: Request, res: Response): Promise<void> => {
   try {
     const { adminId } = req.params;
+
     const result = await AdminServices.deleteAdminFromDB(adminId);
+
+    if (!result) {
+      res.status(404).json({
+        success: false,
+        message: "Admin not found",
+      });
+      return;
+    }
+
     res.status(200).json({
       success: true,
       message: "Admin deleted successfully",
       data: result,
     });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: "Something went wrong",
-      error: err,
-    });
+  } catch (error) {
+    handleError(res, error);
   }
 };
 
+// Controller for admin login
 const loginAdmin = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
@@ -147,12 +187,7 @@ const loginAdmin = async (req: Request, res: Response): Promise<void> => {
     }
 
     const token = jwt.sign(
-      {
-        _id: admin._id,
-        id: admin.id,
-        name: admin.name,
-        email: admin.email,
-      },
+      { _id: admin._id, id: admin.id, name: admin.name, email: admin.email },
       process.env.JWT_SECRET || "jwt_secret",
       { expiresIn: "1h" }
     );
@@ -162,16 +197,12 @@ const loginAdmin = async (req: Request, res: Response): Promise<void> => {
       message: "Login successful",
       token,
     });
-  } catch (err) {
-    console.error("Login error:", err);
-    res.status(500).json({
-      success: false,
-      message: "Something went wrong",
-      error: err,
-    });
+  } catch (error) {
+    handleError(res, error);
   }
 };
 
+// Controller to update admin password
 const updatePassword = async (req: Request, res: Response): Promise<void> => {
   try {
     const { adminId } = req.params;
@@ -225,16 +256,12 @@ const updatePassword = async (req: Request, res: Response): Promise<void> => {
       success: true,
       message: "Password updated successfully",
     });
-  } catch (err) {
-    console.error("Error updating password:", err);
-    res.status(500).json({
-      success: false,
-      message: "Something went wrong",
-      error: err,
-    });
+  } catch (error) {
+    handleError(res, error);
   }
 };
 
+// Export all controllers
 export const AdminControllers = {
   createAdmin,
   getAllAdmins,

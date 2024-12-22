@@ -9,6 +9,15 @@ const startTracker = async (
 ) => {
   try {
     const { employeeId, companyId } = req.body;
+
+    // Validate input
+    if (!employeeId || !companyId) {
+      return res.status(400).json({
+        success: false,
+        message: "Employee ID and Company ID are required",
+      });
+    }
+
     const progress = await WorkProgressService.startTracker(
       employeeId,
       companyId
@@ -28,6 +37,15 @@ const startTracker = async (
 const stopTracker = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { employeeId } = req.body;
+
+    // Validate input
+    if (!employeeId) {
+      return res.status(400).json({
+        success: false,
+        message: "Employee ID is required",
+      });
+    }
+
     const progress = await WorkProgressService.stopTracker(employeeId);
 
     res.status(200).json({
@@ -40,6 +58,7 @@ const stopTracker = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+// Filter work progress with validation and error handling
 const filterWorkProgress = async (
   req: Request,
   res: Response,
@@ -89,6 +108,7 @@ const filterWorkProgress = async (
   }
 };
 
+// Get work progress by company ID
 const getWorkProgressByCompanyId = async (
   req: Request,
   res: Response,
@@ -96,6 +116,15 @@ const getWorkProgressByCompanyId = async (
 ) => {
   try {
     const { companyId } = req.params;
+
+    // Validate input
+    if (!companyId) {
+      return res.status(400).json({
+        success: false,
+        message: "Company ID is required",
+      });
+    }
+
     const workProgresses = await WorkProgressService.getWorkProgressByCompanyId(
       companyId
     );
@@ -117,6 +146,7 @@ const getWorkProgressByCompanyId = async (
   }
 };
 
+// Get work progress by employee ID
 const getWorkProgressByEmployeeId = async (
   req: Request,
   res: Response,
@@ -124,6 +154,15 @@ const getWorkProgressByEmployeeId = async (
 ) => {
   try {
     const { employeeId } = req.params;
+
+    // Validate input
+    if (!employeeId) {
+      return res.status(400).json({
+        success: false,
+        message: "Employee ID is required",
+      });
+    }
+
     const workProgresses =
       await WorkProgressService.getWorkProgressByEmployeeId(employeeId);
 
@@ -144,12 +183,13 @@ const getWorkProgressByEmployeeId = async (
   }
 };
 
+// Get work progress (general method)
 const getWorkProgress = async (req: Request, res: Response) => {
   try {
     const result = await WorkProgressService.getWrokProgressFromDB();
     res.status(200).json({
       success: true,
-      message: "Work rogress data retrieved",
+      message: "Work progress data retrieved",
       data: result,
     });
   } catch (err) {
@@ -161,15 +201,25 @@ const getWorkProgress = async (req: Request, res: Response) => {
   }
 };
 
+// Delete work progress
 const deleteWorkProgress = async (req: Request, res: Response) => {
   try {
     const { workProgressId } = req.params;
+
+    // Validate input
+    if (!workProgressId) {
+      return res.status(400).json({
+        success: false,
+        message: "Work progress ID is required",
+      });
+    }
+
     const result = await WorkProgressService.deleteSingleWorkProgressFromDB(
       workProgressId
     );
     res.status(200).json({
       success: true,
-      message: "Work progress deleted Successfully",
+      message: "Work progress deleted successfully",
       data: result,
     });
   } catch (err) {
