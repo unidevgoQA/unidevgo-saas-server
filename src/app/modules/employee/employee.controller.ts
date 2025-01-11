@@ -218,6 +218,19 @@ const loginEmployee = async (req: Request, res: Response): Promise<void> => {
       success: true,
       message: "Login successful",
       token,
+      profile: {
+        _id: employee._id,
+        id: employee.id,
+        name: employee.name,
+        email: employee.email,
+        profileImageUrl: employee.profileImageUrl,
+        address: employee.address,
+        contactNumber: employee.contactNumber,
+        designation: employee.designation,
+        companyId: employee.companyId,
+        gender: employee.gender,
+      },
+      role: "employee",
     });
   } catch (error) {
     handleError(res, error);

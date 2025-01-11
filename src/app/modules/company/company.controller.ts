@@ -214,6 +214,17 @@ const loginCompany = async (req: Request, res: Response): Promise<void> => {
       success: true,
       message: "Login successful",
       token,
+      profile: {
+        _id: company._id,
+        id: company.id,
+        name: company.name,
+        email: company.email,
+        subscription: company.subscription,
+        profileImageUrl: company.profileImageUrl,
+        address: company.address,
+        contactNumber: company.contactNumber,
+      },
+      role: "company",
     });
   } catch (error) {
     handleError(res, error);

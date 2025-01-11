@@ -196,6 +196,13 @@ const loginAdmin = async (req: Request, res: Response): Promise<void> => {
       success: true,
       message: "Login successful",
       token,
+      profile: {
+        _id: admin._id,
+        id: admin.id,
+        name: admin.name,
+        email: admin.email,
+      },
+      role: "admin",
     });
   } catch (error) {
     handleError(res, error);
