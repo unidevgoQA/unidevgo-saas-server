@@ -194,7 +194,7 @@ const loginAdmin = async (req: Request, res: Response): Promise<void> => {
 
     res.status(200).json({
       success: true,
-      message: "Login successful",
+      message: "Login successfully",
       token,
       profile: {
         _id: admin._id,

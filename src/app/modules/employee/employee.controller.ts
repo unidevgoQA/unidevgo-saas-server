@@ -132,7 +132,7 @@ const deleteEmployee = async (req: Request, res: Response): Promise<void> => {
 const updateEmployee = async (req: Request, res: Response): Promise<void> => {
   try {
     const { employeeId } = req.params;
-    const updateData = req.body.employee;
+    const updateData = req.body;
 
     // Check if update data is provided
     if (!updateData) {
@@ -216,7 +216,7 @@ const loginEmployee = async (req: Request, res: Response): Promise<void> => {
 
     res.status(200).json({
       success: true,
-      message: "Login successful",
+      message: "Login successfully",
       token,
       profile: {
         _id: employee._id,
@@ -229,6 +229,7 @@ const loginEmployee = async (req: Request, res: Response): Promise<void> => {
         designation: employee.designation,
         companyId: employee.companyId,
         gender: employee.gender,
+        joiningDate: employee.joiningDate,
       },
       role: "employee",
     });

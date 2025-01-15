@@ -212,7 +212,7 @@ const loginCompany = async (req: Request, res: Response): Promise<void> => {
 
     res.status(200).json({
       success: true,
-      message: "Login successful",
+      message: "Login successfully",
       token,
       profile: {
         _id: company._id,
