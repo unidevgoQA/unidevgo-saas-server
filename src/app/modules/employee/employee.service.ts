@@ -13,6 +13,11 @@ const getAllEmployeesFromDB = async () => {
   return result;
 };
 
+const getEmployeesByCompanyIdFromDB = async (companyId: string) => {
+  const result = await EmployeeModel.find({ companyId });
+  return result;
+};
+
 const getSingleEmployeeFromDB = async (id: string) => {
   const result = await EmployeeModel.findOne({ id });
   return result;
@@ -58,6 +63,7 @@ export const EmployeeService = {
   getAllEmployeesFromDB,
   getSingleEmployeeFromDB,
   updateEmployeePasswordInDB,
+  getEmployeesByCompanyIdFromDB,
   deleteEmployeeFromDB,
   updateEmployeeInDB,
   getEmployeeByEmail,

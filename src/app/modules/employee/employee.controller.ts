@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { ZodError } from "zod";
 import { EmployeeService } from "./employee.service";
@@ -100,6 +100,44 @@ const getSingleEmployee = async (
     });
   } catch (error) {
     handleError(res, error);
+  }
+};
+
+// Get work progress by company ID
+const getEmployeesByCompanyId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { companyId } = req.params;
+
+    // Validate input
+    if (!companyId) {
+      return res.status(400).json({
+        success: false,
+        message: "Company ID is required",
+      });
+    }
+
+    const employees = await EmployeeService.getEmployeesByCompanyIdFromDB(
+      companyId
+    );
+
+    if (employees.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No employees found for the given company Id",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Employees data retrieved successfully",
+      data: employees,
+    });
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -306,6 +344,7 @@ export const EmployeeControllers = {
   createEmployee,
   getAllEmployees,
   getSingleEmployee,
+  getEmployeesByCompanyId,
   deleteEmployee,
   updateEmployee,
   loginEmployee,
