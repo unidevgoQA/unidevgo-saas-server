@@ -10,7 +10,6 @@ const createCompanyIntoDB = async (company: TCompany) => {
 
 const getAllCompaniesFromDB = async () => {
   const result = await CompanyModel.find();
-  console.log("From service", result);
   return result;
 };
 

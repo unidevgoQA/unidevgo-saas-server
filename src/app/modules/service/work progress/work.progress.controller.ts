@@ -38,6 +38,8 @@ const stopTracker = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { employeeId } = req.body;
 
+    console.log(employeeId);
+
     // Validate input
     if (!employeeId) {
       return res.status(400).json({

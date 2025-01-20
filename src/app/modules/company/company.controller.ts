@@ -128,7 +128,7 @@ const deleteCompany = async (req: Request, res: Response): Promise<void> => {
 const updateCompany = async (req: Request, res: Response): Promise<void> => {
   try {
     const { companyId } = req.params;
-    const updateData = req.body.company;
+    const updateData = req.body;
 
     // Validate the update data
     if (!updateData) {
